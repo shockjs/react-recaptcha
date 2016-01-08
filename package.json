@@ -31,12 +31,15 @@
   },
   "homepage": "https://github.com/appleboy/react-recaptcha",
   "devDependencies": {
-    "babel-core": "^5.8.25",
-    "babel-jest": "^5.3.0",
-    "babel-loader": "^5.3.2",
+    "babel-core": "^6.3.26",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
     "eslint": "^1.9.0",
     "eslint-config-airbnb": "^1.0.0",
     "eslint-plugin-react": "^3.8.0",
+    "babel-jest": "^6.0.1",
     "jest": "^0.1.40",
     "jest-cli": "^0.5.4",
     "pre-commit": "^1.1.2",
@@ -54,7 +57,10 @@
   "jest": {
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
     "unmockedModulePathPatterns": [
-      "<rootDir>/node_modules/react"
+      "<rootDir>/node_modules/react",
+      "<rootDir>/node_modules/fbjs",
+      "<rootDir>/node_modules/react-dom",
+      "<rootDir>/node_modules/react-addons-test-utils"
     ],
     "testFileExtensions": [
       "js",

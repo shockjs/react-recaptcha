@@ -6,6 +6,7 @@ const propTypes = {
   elementID: React.PropTypes.string,
   onloadCallback: React.PropTypes.func,
   verifyCallback: React.PropTypes.func,
+  expiredCallback: React.PropTypes.func,
   render: React.PropTypes.string,
   sitekey: React.PropTypes.string,
   theme: React.PropTypes.string,
@@ -32,8 +33,14 @@ const defaultProps = {
 
 export default class Recaptcha extends React.Component {
 
-  render() {
-    if (this.props.render === 'explicit' && this.props.onloadCallback) {
+  componentDidUpdate() {
+    // Do not continue if server side.
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const captchaElement = document.getElementById(this.props.elementID).innerHTML;
+    if (this.props.render === 'explicit' && this.props.onloadCallback && captchaElement.length === 0) {
       window[this.props.onloadCallbackName] = () => {
         grecaptcha.render(this.props.elementID, {
           sitekey: this.props.sitekey,
@@ -50,11 +57,30 @@ export default class Recaptcha extends React.Component {
         }
       };
 
+      const scriptLocation = document.getElementById('recaptcha-load-scripts');
+      const captcha = document.createElement('script');
+      captcha.src = `https://www.google.com/recaptcha/api.js?onload=${this.props.onloadCallbackName}&render=explicit`;
+      captcha.async = true;
+      captcha.defer = true;
+      scriptLocation.appendChild(captcha);
+    }
+  }
+
+  render() {
+    // Do not render serverside.
+    if (typeof document === 'undefined') {
+      return false;
+    }
+
+    if (this.props.render === 'explicit' && this.props.onloadCallback) {
       return (
-        <div id={this.props.elementID}
-          data-onloadcallbackname={this.props.onloadCallbackName}
-          data-verifycallbackname={this.props.verifyCallbackName}
-          >
+        <div>
+          <div id="recaptcha-load-scripts"></div>
+          <div id={this.props.elementID}
+            data-onloadcallbackname={this.props.onloadCallbackName}
+            data-verifycallbackname={this.props.verifyCallbackName}
+            >
+          </div>
         </div>
       );
     }
